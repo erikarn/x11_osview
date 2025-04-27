@@ -138,6 +138,9 @@ int main(int argc, char *argv[]) {
         for(i = 0; i < 6; i++)
             values[i] = (data[i] - old_data[i]) / (float) total;
 
+        if(values[3] < 0)   /* ignore negative iowait */
+            values[3] = 0;
+
         fclose(fp);
 
         /* Check for window resize (and other things) */
