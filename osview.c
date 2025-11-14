@@ -1,5 +1,5 @@
 /* x11_osview: a clone of gr_osview */
-/* Copyright (C) 2025, Ellie Neills */
+/* Copyright (C) 2025, Ellie McNeill */
 
 #define _DEFAULT_SOURCE
 #include <stdio.h>
