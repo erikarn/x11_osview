@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     unsigned int frames = 0;
     char hostname[20];
     char *host = hostname;
-    char stats[10][20];
+    char stats[12][20];
     FILE *fp;
     int c;
     short j, resize = 1;
