@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <err.h>
 
 #define GREEN 6
 #define GRAY 7
@@ -116,6 +117,9 @@ int main(int argc, char *argv[]) {
         frames++;
 
         fp = fopen("/proc/stat", "r");
+	if (fp == NULL) {
+		err(127, "Couldn't read /proc/stat");
+	}
 
         for(i = 0; i < 12; i++){
             j = 0;
