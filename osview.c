@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     unsigned int old_data[6];
     unsigned int total = 0;
     unsigned int frames = 0;
-    char hostname[20];
+    char hostname[128];
     char *host = hostname;
     char stats[12][20];
     FILE *fp;
@@ -59,7 +59,8 @@ int main(int argc, char *argv[]) {
         return(1);
     }
 
-    gethostname(hostname, 19);
+    memset(hostname, 0, sizeof(hostname));
+    gethostname(hostname, sizeof(hostname) - 1);
 
     win_w = DisplayHeight(disp, 0) / 1.5;
     win_h = win_w / 8;  /* 1:8 aspect ratio */
