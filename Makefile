@@ -1,6 +1,6 @@
 default: x11_osview
 
-CFLAGS=-g -ggdb -I/usr/local/include
+CFLAGS=-g -ggdb -I/usr/local/include -Wall
 LDFLAGS=-L/usr/local/lib
 LDADD=-lX11
 OBJS=osview.o

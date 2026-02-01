@@ -33,6 +33,37 @@ XColor screen_col[8], exact_col;
 XColor temp_col;
 XFontStruct *font;
 
+static void
+linux_stats(unsigned int *data)
+{
+	FILE *fp;
+	char stats[12][20];
+	int c, i;
+	short j;
+
+        fp = fopen("/proc/stat", "r");
+	if (fp == NULL) {
+		err(127, "Couldn't read /proc/stat");
+	}
+
+        for(i = 0; i < 12; i++){
+            j = 0;
+            while((c = getc(fp)) != ' ') {
+                stats[i][j++] = c;
+	    }
+            stats[i][j] = '\0';
+        }
+
+        data[0] = atoi(stats[2]) + atoi(stats[3]); /* user */
+        data[1] = atoi(stats[4]); /* sys */
+        data[2] = atoi(stats[7]) + atoi(stats[8]); /* irqs */
+        data[3] = atoi(stats[6]); /* iowait */
+        data[4] = atoi(stats[10]) + atoi(stats[11]); /* guest */
+        data[5] = atoi(stats[5]); /* idle */
+
+        fclose(fp);
+}
+
 int main(int argc, char *argv[]) {
 
     XSizeHints *size_hints;
@@ -48,10 +79,7 @@ int main(int argc, char *argv[]) {
     unsigned int frames = 0;
     char hostname[128];
     char *host = hostname;
-    char stats[12][20];
-    FILE *fp;
-    int c;
-    short j, resize = 1;
+    short resize = 1;
 
     if(!(disp = XOpenDisplay(0))) {     /* Use $DISPLAY */
         fprintf(stderr, "Error: Can't connect to X server\n" 
@@ -117,24 +145,7 @@ int main(int argc, char *argv[]) {
 
         frames++;
 
-        fp = fopen("/proc/stat", "r");
-	if (fp == NULL) {
-		err(127, "Couldn't read /proc/stat");
-	}
-
-        for(i = 0; i < 12; i++){
-            j = 0;
-            while((c = getc(fp)) != ' ')
-                stats[i][j++] = c;
-                stats[i][j] = '\0';
-        }
-
-        data[0] = atoi(stats[2]) + atoi(stats[3]); /* user */
-        data[1] = atoi(stats[4]); /* sys */
-        data[2] = atoi(stats[7]) + atoi(stats[8]); /* irqs */
-        data[3] = atoi(stats[6]); /* iowait */
-        data[4] = atoi(stats[10]) + atoi(stats[11]); /* guest */
-        data[5] = atoi(stats[5]); /* idle */
+	linux_stats(data);
 
         total = 0;
         for(i = 0; i < 6; i++)
@@ -145,8 +156,6 @@ int main(int argc, char *argv[]) {
 
         if(values[3] < 0)   /* ignore negative iowait */
             values[3] = 0;
-
-        fclose(fp);
 
         /* Check for window resize (and other things) */
         /* CheckMaskEvent is used instead of CheckTypedEvent so that the */
